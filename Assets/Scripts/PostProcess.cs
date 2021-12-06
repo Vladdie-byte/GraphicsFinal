@@ -18,6 +18,9 @@ public class PostProcess : MonoBehaviour
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        //Set uniform variables here
+        //member varibles, private, etc.
+        
         Graphics.Blit(source,destination,_material);
     }
 
