@@ -7,7 +7,7 @@ public class PostProcess : MonoBehaviour
 
     private Material _material;
     public Shader _shader;
-
+    private Matrix4x4 colorMatrix;
 
     // Start is called before the first frame update
     void Start()
@@ -20,8 +20,15 @@ public class PostProcess : MonoBehaviour
     {
         //Set uniform variables here
         //member varibles, private, etc.
-        
+        _material.SetMatrix("ColorScaleMatrix", colorMatrix);
+
+
         Graphics.Blit(source,destination,_material);
+    }
+
+    public void setColorMatrix(Matrix4x4 mat)
+    {
+        colorMatrix=mat;
     }
 
 }
