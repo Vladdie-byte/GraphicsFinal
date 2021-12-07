@@ -22,33 +22,50 @@ namespace Unity.Mathematics
         {
             CameraPostProcessing = Camera.main.GetComponentInParent<PostProcess>();
 
-            GUILayout.Label("Base Settings", EditorStyles.boldLabel);
-            if (GUILayout.Button("RED BLIND"))
+            GUILayout.Label("Trichromatism", EditorStyles.boldLabel);
+            if (GUILayout.Button("protanomalous"))
+            {
+                colors = new Vector3(.33f, 1, 1);
+                CameraPostProcessing.setColorMatrix(calculateRatios());
+            }
+            if (GUILayout.Button("deuteranomalous"))
+            {
+                colors = new Vector3(1, .33f, 1);
+                CameraPostProcessing.setColorMatrix(calculateRatios());
+            }
+            if (GUILayout.Button("tritanomalous"))
+            {
+                colors = new Vector3(1, 1, .33f);
+                CameraPostProcessing.setColorMatrix(calculateRatios());
+            }
+            GUILayout.Label("Dichromatism", EditorStyles.boldLabel);
+            if (GUILayout.Button("protanopia"))
             {
                 colors = new Vector3(0, 1, 1);
                 CameraPostProcessing.setColorMatrix(calculateRatios());
             }
-            if (GUILayout.Button("GREEN BLIND"))
+            if (GUILayout.Button("deuteranopia"))
             {
                 colors = new Vector3(1, 0, 1);
                 CameraPostProcessing.setColorMatrix(calculateRatios());
             }
-            if (GUILayout.Button("BLUE BLIND"))
+            if (GUILayout.Button("tritanopia"))
             {
                 colors = new Vector3(1, 1, 0);
                 CameraPostProcessing.setColorMatrix(calculateRatios());
             }
-            if (GUILayout.Button("RED MONOCHROMATIC"))
+            GUILayout.Label("Monochromatism", EditorStyles.boldLabel);
+            if (GUILayout.Button("RED"))
             {
                 colors = new Vector3(1, 0, 0);
                 CameraPostProcessing.setColorMatrix(calculateRatios());
             }
-            if (GUILayout.Button("GREEN MONOCHROMATIC"))
+            if (GUILayout.Button("GREEN"))
             {
                 colors = new Vector3(0, 1, 0);
                 CameraPostProcessing.setColorMatrix(calculateRatios());
             }
-            if (GUILayout.Button("BLUE MONOCHROMATIC"))
+            if (GUILayout.Button("BLUE"))
             {
                 colors = new Vector3(0, 0, 1);
                 CameraPostProcessing.setColorMatrix(calculateRatios());
