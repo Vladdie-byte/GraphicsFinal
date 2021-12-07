@@ -10,12 +10,14 @@ namespace Unity.Mathematics
     {
         [SerializeField] PostProcess CameraPostProcessing;
 
-        private Vector3 colors = new Vector3(0, 0, 0);
-        private bool groupEnabled;
+        private static Vector3 colors = new Vector3(1, 1, 1);
+        private static Vector3 colors2 = new Vector3(1, 1, 1);
+        private bool groupEnabled = false;
         [MenuItem("Window/MY EYES")]
         public static void ShowWindow()
         {
             EditorWindow.GetWindow(typeof(ColorBlindWindow));
+            colors2 = colors;
         }
 
         public void OnGUI()
@@ -26,66 +28,53 @@ namespace Unity.Mathematics
             if (GUILayout.Button("protanomalous"))
             {
                 colors = new Vector3(.33f, 1, 1);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             if (GUILayout.Button("deuteranomalous"))
             {
                 colors = new Vector3(1, .33f, 1);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             if (GUILayout.Button("tritanomalous"))
             {
                 colors = new Vector3(1, 1, .33f);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             GUILayout.Label("Dichromatism", EditorStyles.boldLabel);
             if (GUILayout.Button("protanopia"))
             {
                 colors = new Vector3(0, 1, 1);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             if (GUILayout.Button("deuteranopia"))
             {
                 colors = new Vector3(1, 0, 1);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             if (GUILayout.Button("tritanopia"))
             {
                 colors = new Vector3(1, 1, 0);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             GUILayout.Label("Monochromatism", EditorStyles.boldLabel);
             if (GUILayout.Button("RED"))
             {
                 colors = new Vector3(1, 0, 0);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             if (GUILayout.Button("GREEN"))
             {
                 colors = new Vector3(0, 1, 0);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             if (GUILayout.Button("BLUE"))
             {
                 colors = new Vector3(0, 0, 1);
-                CameraPostProcessing.setColorMatrix(calculateRatios());
             }
             groupEnabled = EditorGUILayout.BeginToggleGroup("Color Scales", groupEnabled);
-            colors.x = EditorGUILayout.Slider("Red", colors.x, 0, 1 );
+            colors.x = EditorGUILayout.Slider("Red", colors.x, 0, 1);
             colors.y = EditorGUILayout.Slider("Green", colors.y, 0, 1);
             colors.z = EditorGUILayout.Slider("Blue", colors.z, 0, 1);
             EditorGUILayout.EndToggleGroup();
-
-            if (GUILayout.Button("Update"))
+            if (colors2 != colors)
             {
                 CameraPostProcessing.setColorMatrix(calculateRatios());
             }
+            colors2 = colors;
         }
 
-        public void OnSlider()
-        {
-            CameraPostProcessing.setColorMatrix(calculateRatios());
-        }
 
         private Matrix4x4 calculateRatios()
         {
@@ -104,7 +93,7 @@ namespace Unity.Mathematics
             Matrix3x3 Tinverse = new Matrix3x3(new float[3, 3] { { 5.47221206f, -4.6419601f, 0.16963708f }, { -1.1252419f, 2.29317094f, -0.1678952f }, { 0.02980165f, -0.19318073f, 1.16364789f } });
             Matrix3x1 W = new Matrix3x1(1, 1, 1);
 
-            
+
             if ((colors.x != 0 || colors.y != 0) && (colors.x != 0 || colors.z != 0) && (colors.z != 0 || colors.y != 0))
             {
                 if (colors.x != 1)
@@ -114,7 +103,7 @@ namespace Unity.Mathematics
                     float q1 = (1 - colors.x) * (blueBase.Matrix[0] * W.Matrix[2] - W.Matrix[0] * blueBase.Matrix[2]) / (blueBase.Matrix[1] * W.Matrix[2] - W.Matrix[1] * blueBase.Matrix[2]);
                     float q2 = (1 - colors.x) * (blueBase.Matrix[0] * W.Matrix[1] - W.Matrix[0] * blueBase.Matrix[1]) / (blueBase.Matrix[2] * W.Matrix[1] - W.Matrix[2] * blueBase.Matrix[1]);
 
-                    
+
                     colorMatrix.newColor(new float[] { colors.x, q1, q2 }, 0);
                 }
                 else
@@ -150,35 +139,27 @@ namespace Unity.Mathematics
             }
             else if (colors.x != 0 && colors.y != 0 && colors.z != 0)
             {
-                //full colorblind
-                //(col.x * 0.299) + (col.y * 0.587) + (col.z * 0.114);
+                colorMatrix = new Matrix3x3(new float[3, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } });
             }
             else
             {
-                Matrix3x3 temp = new Matrix3x3();
                 if (colors.x != 0)
                 {
-                    temp = Tinverse.MatrixMultiplication3x3(new Matrix3x3(new float[3, 3] { { colors.x, 0f, 0f }, { colors.x, 0f, 0f }, { colors.x, 0f, 0f } }));
-                    temp = temp.MatrixMultiplication3x3(T);
+                    colorMatrix = new Matrix3x3(new float[3, 3] { { colors.x, 0f, 0f }, { colors.x, 0f, 0f }, { colors.x, 0f, 0f } });
                 }
                 else if (colors.y != 0)
                 {
-                    temp = Tinverse.MatrixMultiplication3x3(new Matrix3x3(new float[3, 3] { { 0f, colors.y, 0f }, { 0f, colors.y, 0f }, { 0f, colors.y, 0f } }));
+                    colorMatrix = new Matrix3x3(new float[3, 3] { { 0f, colors.y, 0f }, { 0f, colors.y, 0f }, { 0f, colors.y, 0f } });
                 }
                 else if (colors.z != 0)
                 {
-                    temp = Tinverse.MatrixMultiplication3x3(new Matrix3x3(new float[3, 3] { { 0f, 0f, colors.z, }, { 0f, 0f, colors.z, }, { 0f, 0f, colors.z, } }));
+                    colorMatrix = new Matrix3x3(new float[3, 3] { { 0f, 0f, colors.z, }, { 0f, 0f, colors.z, }, { 0f, 0f, colors.z, } });
                 }
-                temp = temp.MatrixMultiplication3x3(T);
-                //colorMatrix = convertMatrix(new Matrix3x1(temp.Matrix[0, 0], temp.Matrix[1, 1], temp.Matrix[2, 2]));
             }
-
-            Debug.Log(colorMatrix.StringThing());
-
             Matrix3x3 temporary = Tinverse.MatrixMultiplication3x3(colorMatrix);
             temporary = temporary.MatrixMultiplication3x3(T);
             return convertMatrix(temporary);
-            
+
         }
         private Matrix4x4 convertMatrix(Matrix3x3 mat)
         {
@@ -252,7 +233,7 @@ namespace Unity.Mathematics
         }
         public Matrix3x1 MatrixMultiplication3x1(Matrix3x1 otherMatrix)
         {
-            Matrix3x1 newMatrix = new Matrix3x1(0,0,0);
+            Matrix3x1 newMatrix = new Matrix3x1(0, 0, 0);
             for (int i = 0; i < 3; i++)
             {
                 float temp = 0;

@@ -13,6 +13,7 @@ public class PostProcess : MonoBehaviour
     void Start()
     {
         _material = new Material(_shader);
+        colorMatrix = Matrix4x4.identity;
     }
 
 
