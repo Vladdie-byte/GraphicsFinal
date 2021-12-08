@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Unity.Mathematics;
+using Unity.Math;
 
 namespace Unity.Mathematics
 {
@@ -70,13 +71,16 @@ namespace Unity.Mathematics
             EditorGUILayout.EndToggleGroup();
             if (colors2 != colors)
             {
-                CameraPostProcessing.setColorMatrix(calculateRatios());
+                Matrix4x4 temp =new Matrix4x4();
+                float temp2=0;
+                (temp,temp2)=calculateRatios();
+                CameraPostProcessing.setColorMatrix(temp,temp2);
             }
             colors2 = colors;
         }
 
 
-        private Matrix4x4 calculateRatios()
+        private (Matrix4x4, float) calculateRatios()
         {
             Matrix3x3 colorMatrix = new Matrix3x3(new float[3, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } });
 
@@ -158,7 +162,7 @@ namespace Unity.Mathematics
             }
             Matrix3x3 temporary = Tinverse.MatrixMultiplication3x3(colorMatrix);
             temporary = temporary.MatrixMultiplication3x3(T);
-            return convertMatrix(temporary);
+            return (convertMatrix(temporary), Mathf.max(colors.x,Mathf.max(colors.y,colors.z)));
 
         }
         private Matrix4x4 convertMatrix(Matrix3x3 mat)
