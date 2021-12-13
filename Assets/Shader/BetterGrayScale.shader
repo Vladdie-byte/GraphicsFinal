@@ -35,7 +35,6 @@ Shader "Unlit/GrayScale"
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			Matrix ColorScaleMatrix;
-			float maxColor;
 
 			v2f vert(appdata v)
 			{
@@ -53,7 +52,7 @@ Shader "Unlit/GrayScale"
 			//fixed4 redOnly = fixed4(col.y,col.x,col.z,col.w);
 			//float intensity = (col.x * 0.299) + (col.y * 0.587) + (col.z * 0.114);
 			//fixed4 bandw = fixed4(intensity,intensity,intensity,col.w);
-			fixed4 bandw = fixed4((col.x * ColorScaleMatrix[0][0] + col.y * ColorScaleMatrix[0][1] + col.z * ColorScaleMatrix[0][2])*maxColor, (col.x * ColorScaleMatrix[1][0] + col.y * ColorScaleMatrix[1][1] + col.z * ColorScaleMatrix[1][2])maxColor, (col.x * ColorScaleMatrix[2][0] + col.y * ColorScaleMatrix[2][1] + col.z * ColorScaleMatrix[2][2])*maxColor, col.w);
+			fixed4 bandw = fixed4((col.x * ColorScaleMatrix[0][0] + col.y * ColorScaleMatrix[0][1] + col.z * ColorScaleMatrix[0][2]), (col.x * ColorScaleMatrix[1][0] + col.y * ColorScaleMatrix[1][1] + col.z * ColorScaleMatrix[1][2]), (col.x * ColorScaleMatrix[2][0] + col.y * ColorScaleMatrix[2][1] + col.z * ColorScaleMatrix[2][2]), col.w);
 			// apply fog
 			//UNITY_APPLY_FOG(i.fogCoord, col);
 			return bandw;
