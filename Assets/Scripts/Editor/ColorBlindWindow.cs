@@ -13,7 +13,7 @@ namespace Unity.Mathematics
         private static Vector3 colors = new Vector3(1, 1, 1);
         private static Vector3 colors2 = new Vector3(1, 1, 1);
         private bool groupEnabled = false;
-        [MenuItem("Window/MY EYES")]
+        [MenuItem("Window/Color Blindness")]
         public static void ShowWindow()
         {
             EditorWindow.GetWindow(typeof(ColorBlindWindow));

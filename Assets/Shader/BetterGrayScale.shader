@@ -1,4 +1,4 @@
-Shader "Unlit/GrayScale"
+Shader "ColorBlindShader"
 {
 	Properties
 	{
@@ -49,12 +49,9 @@ Shader "Unlit/GrayScale"
 			{
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
-			//fixed4 redOnly = fixed4(col.y,col.x,col.z,col.w);
-			//float intensity = (col.x * 0.299) + (col.y * 0.587) + (col.z * 0.114);
-			//fixed4 bandw = fixed4(intensity,intensity,intensity,col.w);
-			fixed4 bandw = fixed4(mul(ColorScaleMatrix,col));
-			// apply fog
-			//UNITY_APPLY_FOG(i.fogCoord, col);
+				fixed4 bandw = fixed4(mul(ColorScaleMatrix,col));
+				//	apply fog
+				//	UNITY_APPLY_FOG(i.fogCoord, col);
 			return bandw;
 		}
 		ENDCG
